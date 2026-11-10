@@ -42,6 +42,7 @@ button.action{border:0;border-radius:14px;padding:16px 10px;font-size:18px;font-
 #resultQR{display:inline-block;background:white;padding:12px;border:2px solid var(--blue);border-radius:12px;min-width:244px;min-height:244px;margin:12px auto}
 #resultQR img,#resultQR canvas{display:block;margin:auto;max-width:100%;height:auto}
 .small{font-size:12px;color:#667085;text-align:center;margin:16px 0 5px;line-height:1.5}
+
 @media(max-width:430px){
 .wrap{padding:10px}
 .candidates{gap:8px}
@@ -50,6 +51,35 @@ button.action{border:0;border-radius:14px;padding:16px 10px;font-size:18px;font-
 .name{font-size:14px}
 .panel img{height:300px}
 .actions button{font-size:16px}
+}
+
+/* PENGATURAN CETAK */
+@media print{
+@page{size:A4;margin:15mm}
+body{background:#fff!important}
+body *{visibility:hidden!important}
+#donePage,#donePage *{visibility:visible!important}
+#donePage{
+display:block!important;
+position:absolute;
+left:0;
+top:0;
+width:100%;
+margin:0;
+padding:0;
+background:#fff!important
+}
+#donePage .thanks,
+#donePage .thanks-card{
+background:#fff!important;
+box-shadow:none!important;
+margin:0;
+padding:12px
+}
+#downloadQR,#printQR,#restartBtn{
+display:none!important
+}
+#resultQR{border:2px solid #092d83}
 }
 </style>
 </head>
@@ -62,7 +92,9 @@ button.action{border:0;border-radius:14px;padding:16px 10px;font-size:18px;font-
 <p>Kecamatan Binong, Kabupaten Subang — Tahun 2026</p>
 </header>
 
+<!-- HALAMAN PILIH CALON -->
 <section id="votePage">
+
 <h2>Silakan Pilih Calon Kepala Desa</h2>
 <p class="sub">Tekan foto kandidat yang Anda pilih</p>
 
@@ -86,9 +118,12 @@ button.action{border:0;border-radius:14px;padding:16px 10px;font-size:18px;font-
 PILIH KANDIDAT
 </button>
 
-<p class="small">HALAMAN SIMULASI — bukan sistem pemungutan suara resmi.</p>
+<p class="small">
+HALAMAN SIMULASI — bukan sistem pemungutan suara resmi.
+</p>
 </section>
 
+<!-- HALAMAN KONFIRMASI -->
 <section id="confirmPage" class="hidden">
 
 <h2>Konfirmasi Pilihan Anda</h2>
@@ -101,18 +136,25 @@ PILIH KANDIDAT
 </div>
 
 <div class="actions">
-<button class="action danger" id="againBtn" type="button">ULANGI</button>
-<button class="action primary" id="submitBtn" type="button">PILIH</button>
+<button class="action danger" id="againBtn" type="button">
+ULANGI
+</button>
+
+<button class="action primary" id="submitBtn" type="button">
+PILIH
+</button>
 </div>
 
 </section>
 
+<!-- HALAMAN HASIL -->
 <section id="donePage" class="hidden">
 
 <div class="thanks">
 <div class="thanks-card">
 
 <div class="check">✅</div>
+
 <h2>Terima Kasih</h2>
 <p>Hasil pilihan simulasi Anda:</p>
 
@@ -120,12 +162,17 @@ PILIH KANDIDAT
 <p id="resultNumber"></p>
 
 <h3>QR CODE HASIL PILIHAN</h3>
+
 <div id="resultQR" aria-label="QR Code hasil simulasi"></div>
 
 <p id="qrDetails" style="font-size:13px;overflow-wrap:anywhere"></p>
 
 <button class="action primary" id="downloadQR" type="button">
 SIMPAN QR CODE
+</button>
+
+<button class="action primary" id="printQR" type="button" style="margin-top:10px">
+🖨 CETAK ULANG
 </button>
 
 </div>
@@ -136,30 +183,30 @@ QR ini hanya berisi bukti pilihan simulasi pada perangkat ini.
 Bukan bukti suara resmi dan tidak dikirim ke server.
 </p>
 
-<button class="action primary" id="restartBtn" type="button"
-style="display:block;margin:18px auto">
+<button class="action primary" id="restartBtn" type="button" style="display:block;margin:18px auto">
 KEMBALI KE AWAL
 </button>
 
 </section>
 </main>
 
+<!-- LIBRARY QR CODE -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <script>
 "use strict";
 
 const candidates = {
-  "1": {
-    name:"CALON 01",
-    number:"1",
-    photo:"calon-1.jpeg"
-  },
-  "2": {
-    name:"DASIM SUMANTRI, S.E",
-    number:"2",
-    photo:"calon-2.jpeg"
-  }
+"1":{
+name:"CALON 01",
+number:"1",
+photo:"calon-1.jpeg"
+},
+"2":{
+name:"DASIM SUMANTRI, S.E",
+number:"2",
+photo:"calon-2.jpeg"
+}
 };
 
 let selected = null;
@@ -169,174 +216,184 @@ const confirmPage = document.getElementById("confirmPage");
 const donePage = document.getElementById("donePage");
 const chooseBtn = document.getElementById("chooseBtn");
 
-function showPage(page) {
-  [votePage, confirmPage, donePage].forEach(function(section) {
-    section.classList.add("hidden");
-  });
-
-  page.classList.remove("hidden");
-  window.scrollTo({top:0, behavior:"smooth"});
+function showPage(page){
+[votePage,confirmPage,donePage].forEach(function(section){
+section.classList.add("hidden");
+});
+page.classList.remove("hidden");
+window.scrollTo({top:0,behavior:"smooth"});
 }
 
-function clearCandidateSelection() {
-  selected = null;
+function clearCandidateSelection(){
+selected = null;
 
-  document.querySelectorAll(".candidate").forEach(function(button) {
-    button.classList.remove("selected");
-    button.setAttribute("aria-pressed", "false");
-  });
+document.querySelectorAll(".candidate").forEach(function(button){
+button.classList.remove("selected");
+button.setAttribute("aria-pressed","false");
+});
 
-  chooseBtn.disabled = true;
+chooseBtn.disabled = true;
 }
 
-// KLIK FOTO UNTUK MEMILIH KANDIDAT
-document.querySelectorAll(".candidate").forEach(function(button) {
+// PILIH FOTO KANDIDAT
+document.querySelectorAll(".candidate").forEach(function(button){
 
-  button.addEventListener("click", function() {
+button.addEventListener("click",function(){
 
-    selected = candidates[button.dataset.id];
+selected = candidates[button.dataset.id];
 
-    if (!selected) return;
+if(!selected)return;
 
-    document.querySelectorAll(".candidate").forEach(function(item) {
+document.querySelectorAll(".candidate").forEach(function(item){
 
-      const isSelected = item === button;
+const isSelected = item === button;
 
-      item.classList.toggle("selected", isSelected);
+item.classList.toggle("selected",isSelected);
 
-      item.setAttribute("aria-pressed", String(isSelected));
+item.setAttribute("aria-pressed",String(isSelected));
 
-    });
+});
 
-    chooseBtn.disabled = false;
+chooseBtn.disabled = false;
 
-  });
+});
 
 });
 
 // TOMBOL PILIH KANDIDAT
-chooseBtn.addEventListener("click", function() {
+chooseBtn.addEventListener("click",function(){
 
-  if (!selected) {
-    alert("Silakan pilih kandidat terlebih dahulu.");
-    return;
-  }
+if(!selected){
+alert("Silakan pilih kandidat terlebih dahulu.");
+return;
+}
 
-  document.getElementById("chosenPhoto").src = selected.photo;
+document.getElementById("chosenPhoto").src = selected.photo;
 
-  document.getElementById("chosenName").textContent = selected.name;
+document.getElementById("chosenName").textContent = selected.name;
 
-  document.getElementById("chosenNumber").textContent =
-    "Calon Nomor Urut " + selected.number;
+document.getElementById("chosenNumber").textContent =
+"Calon Nomor Urut " + selected.number;
 
-  showPage(confirmPage);
+showPage(confirmPage);
 
 });
 
 // TOMBOL ULANGI
-document.getElementById("againBtn").addEventListener("click", function() {
+document.getElementById("againBtn").addEventListener("click",function(){
 
-  clearCandidateSelection();
+clearCandidateSelection();
 
-  showPage(votePage);
+showPage(votePage);
 
 });
 
-// TOMBOL KONFIRMASI PILIH
-document.getElementById("submitBtn").addEventListener("click", function() {
+// KONFIRMASI PILIH
+document.getElementById("submitBtn").addEventListener("click",function(){
 
-  if (!selected) {
-    alert("Silakan pilih calon terlebih dahulu.");
-    showPage(votePage);
-    return;
-  }
+if(!selected){
+alert("Silakan pilih calon terlebih dahulu.");
+showPage(votePage);
+return;
+}
 
-  showPage(donePage);
+showPage(donePage);
 
-  document.getElementById("resultName").textContent = selected.name;
+document.getElementById("resultName").textContent = selected.name;
 
-  document.getElementById("resultNumber").textContent =
-    "Nomor urut " + selected.number;
+document.getElementById("resultNumber").textContent =
+"Nomor urut " + selected.number;
 
-  const qrBox = document.getElementById("resultQR");
+const qrBox = document.getElementById("resultQR");
 
-  qrBox.innerHTML = "";
+qrBox.innerHTML = "";
 
-  const now = new Date();
+const now = new Date();
 
-  const payload = {
-    jenis: "SIMULASI PILKADES DESA KARANGSARI 2026",
-    nomor_calon: selected.number,
-    nama_calon: selected.name,
-    waktu: now.toLocaleString("id-ID"),
-    status: "BUKTI SIMULASI - BUKAN SUARA RESMI"
-  };
+const payload = {
+jenis:"SIMULASI PILKADES DESA KARANGSARI 2026",
+nomor_calon:selected.number,
+nama_calon:selected.name,
+waktu:now.toLocaleString("id-ID"),
+status:"BUKTI SIMULASI - BUKAN SUARA RESMI"
+};
 
-  if (typeof QRCode === "undefined") {
+if(typeof QRCode === "undefined"){
 
-    qrBox.textContent =
-      "QR belum dapat dibuat. Periksa koneksi internet lalu muat ulang halaman.";
+qrBox.textContent =
+"QR belum dapat dibuat. Periksa koneksi internet lalu muat ulang halaman.";
 
-    return;
-  }
+return;
 
-  new QRCode(qrBox, {
-    text: JSON.stringify(payload),
-    width: 220,
-    height: 220,
-    correctLevel: QRCode.CorrectLevel.M
-  });
+}
 
-  document.getElementById("qrDetails").textContent =
-    "Pilihan: " + selected.name + " | " + now.toLocaleString("id-ID");
+new QRCode(qrBox,{
+text:JSON.stringify(payload),
+width:220,
+height:220,
+correctLevel:QRCode.CorrectLevel.M
+});
 
+document.getElementById("qrDetails").textContent =
+"Pilihan: " + selected.name + " | " + now.toLocaleString("id-ID");
+
+// CETAK OTOMATIS SETELAH QR SELESAI DIBUAT
+setTimeout(function(){
+window.print();
+},700);
+
+});
+
+// CETAK ULANG
+document.getElementById("printQR").addEventListener("click",function(){
+window.print();
 });
 
 // SIMPAN QR CODE
-document.getElementById("downloadQR").addEventListener("click", function() {
+document.getElementById("downloadQR").addEventListener("click",function(){
 
-  const canvas = document.querySelector("#resultQR canvas");
+const canvas = document.querySelector("#resultQR canvas");
 
-  const image = document.querySelector("#resultQR img");
+const image = document.querySelector("#resultQR img");
 
-  let url = "";
+let url = "";
 
-  if (canvas) url = canvas.toDataURL("image/png");
-  else if (image) url = image.src;
+if(canvas)url = canvas.toDataURL("image/png");
+else if(image)url = image.src;
 
-  if (!url) {
-    alert("QR belum tersedia. Pastikan internet aktif.");
-    return;
-  }
+if(!url){
+alert("QR belum tersedia. Pastikan internet aktif.");
+return;
+}
 
-  const link = document.createElement("a");
+const link = document.createElement("a");
 
-  link.href = url;
+link.href = url;
 
-  link.download = "QR-Hasil-Simulasi-Pilkades-Karangsari.png";
+link.download = "QR-Hasil-Simulasi-Pilkades-Karangsari.png";
 
-  document.body.appendChild(link);
+document.body.appendChild(link);
 
-  link.click();
+link.click();
 
-  link.remove();
+link.remove();
 
 });
 
 // KEMBALI KE AWAL
-document.getElementById("restartBtn").addEventListener("click", function() {
+document.getElementById("restartBtn").addEventListener("click",function(){
 
-  clearCandidateSelection();
+clearCandidateSelection();
 
-  document.getElementById("resultQR").innerHTML = "";
+document.getElementById("resultQR").innerHTML = "";
 
-  document.getElementById("resultName").textContent = "";
+document.getElementById("resultName").textContent = "";
 
-  document.getElementById("resultNumber").textContent = "";
+document.getElementById("resultNumber").textContent = "";
 
-  document.getElementById("qrDetails").textContent = "";
+document.getElementById("qrDetails").textContent = "";
 
-  showPage(votePage);
+showPage(votePage);
 
 });
 
