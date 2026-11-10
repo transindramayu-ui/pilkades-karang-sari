@@ -87,19 +87,42 @@ button:focus-visible,.candidate:focus-visible{outline:4px solid #f5b400;outline-
 <div class="check">✅</div>
 <h2>Terima Kasih!</h2>
 <p>Suara Anda Berhasil di rekam.</p>
+ <h3>QR CODE HASIL PILIHAN</h3>
+<div id="resultQR"></div>
+<p id="qrDetails"></p>
 </div>
 </div>
 <p class="small">Catatan: pilihan hanya diproses di halaman ini dan tidak dikirim atau disimpan sebagai suara resmi.</p>
 <button class="primary" id="restart" type="button" style="display:block;margin:20px auto">KEMBALI KE AWAL</button>
 </section>
 </main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 const candidates={
  "1":{name:"CALON 01",number:"1",photo:"calon-01.jpg"},
  "2":{name:"DASIM SUMANTRI, S.E",number:"2",photo:"calon-2.jpeg"}
 };
 let selected=null;
-const vote=document.getElementById("vote"),confirmPage=document.getElementById("confirm"),done=document.getElementById("done");
+const vote=document.getElementById("submitVote").addEventListener("click",()=>{
+ show(done);
+ const data=JSON.stringify({
+  desa:"Karangsari",
+  jenis:"Simulasi Pilkades 2026",
+  nomor:selected.number,
+  nama:selected.name,
+  waktu:new Date().toLocaleString("id-ID"),
+  status:"BUKTI SIMULASI"
+ });
+ const qr=document.getElementById("resultQR");
+ qr.innerHTML="";
+ new QRCode(qr,{
+  text:data,
+  width:220,
+  height:220
+ });
+ document.getElementById("qrDetails").textContent=
+ "Pilihan: "+selected.name+" Nomor "+selected.number;
+});
 function show(page){[vote,confirmPage,done].forEach(x=>x.classList.add("hidden"));page.classList.remove("hidden");window.scrollTo({top:0,behavior:"smooth"});}
 document.querySelectorAll(".candidate").forEach(btn=>btn.addEventListener("click",()=>{
  selected=candidates[btn.dataset.id];
