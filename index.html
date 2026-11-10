@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#092d83">
 <title>Simulasi Pilkades Desa Karangsari 2026</title>
+
 <style>
 :root{--blue:#092d83;--red:#ed1010;--pale:#eef2fb}
 *{box-sizing:border-box}
@@ -19,17 +20,20 @@ h2{text-align:center;font-size:clamp(24px,5.5vw,36px);margin:14px 0 5px;color:#1
 .candidate{position:relative;border:4px solid var(--blue);border-radius:20px;padding:9px;background:#fff;cursor:pointer;text-align:center;color:var(--blue);font:inherit}
 .candidate:focus-visible{outline:4px solid #f5b400;outline-offset:3px}
 .candidate:active{transform:scale(.985)}
+.candidate.selected{background:#dce8ff;border-color:var(--red);box-shadow:0 0 0 3px #ed101055}
 .num{position:absolute;z-index:2;top:-25px;left:50%;transform:translateX(-50%);width:58px;height:58px;border-radius:50%;background:var(--red);border:4px solid white;color:white;font-size:36px;font-weight:900;display:grid;place-items:center}
 .candidate img{width:100%;height:clamp(210px,48vw,360px);object-fit:contain;object-position:center;background:#f1f1f1;border-radius:13px;display:block;margin-top:15px}
 .name{font-size:clamp(15px,3.4vw,22px);font-weight:900;padding:10px 2px 5px;min-height:54px;display:flex;align-items:center;justify-content:center}
-.pickbar{margin-top:22px;background:var(--blue);color:#fff;text-align:center;border-radius:16px;padding:14px;font-size:clamp(23px,5vw,38px);font-weight:900}
+.pickbar{width:100%;margin-top:22px;background:var(--blue);color:#fff;text-align:center;border:0;border-radius:16px;padding:14px;font-size:clamp(23px,5vw,38px);font-weight:900;cursor:pointer;font-family:Arial,Helvetica,sans-serif}
+.pickbar:disabled{opacity:.55;cursor:not-allowed}
 .panel{background:var(--pale);border-radius:22px;padding:20px 14px;text-align:center;margin:22px 0}
 .panel img{width:min(100%,340px);height:340px;object-fit:contain;object-position:center;border:4px solid var(--red);border-radius:18px;background:#fff}
 .panel h2{color:var(--blue);margin:12px 0 4px}
 .panel p{font-size:19px;color:var(--blue);font-weight:700;margin:4px 0}
 .actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
 button.action{border:0;border-radius:14px;padding:16px 10px;font-size:18px;font-weight:900;color:#fff;cursor:pointer}
-.primary{background:#075bc8}.danger{background:#ed1010}
+.primary{background:#075bc8}
+.danger{background:#ed1010}
 .hidden{display:none!important}
 .thanks{background:#f0f2f5;border-radius:22px;padding:18px;margin-top:20px}
 .thanks-card{background:white;border-radius:22px;padding:24px 14px;text-align:center;color:var(--blue)}
@@ -38,32 +42,21 @@ button.action{border:0;border-radius:14px;padding:16px 10px;font-size:18px;font-
 #resultQR{display:inline-block;background:white;padding:12px;border:2px solid var(--blue);border-radius:12px;min-width:244px;min-height:244px;margin:12px auto}
 #resultQR img,#resultQR canvas{display:block;margin:auto;max-width:100%;height:auto}
 .small{font-size:12px;color:#667085;text-align:center;margin:16px 0 5px;line-height:1.5}
-@media(max-width:430px){.wrap{padding:10px}.candidates{gap:8px}.candidate{border-width:3px;padding:6px}.candidate img{height:235px}.name{font-size:14px}.panel img{height:300px}.actions button{font-size:16px}}
-.small{font-size:12px;color:#667085;text-align:center;margin:16px 0 5px;line-height:1.5}
-
-/* CSS TAMBAHAN TOMBOL PILIH KANDIDAT */
-.pickbar {
-  width: 100%;
-  border: none;
-  cursor: pointer;
-  font-family: Arial, sans-serif;
+@media(max-width:430px){
+.wrap{padding:10px}
+.candidates{gap:8px}
+.candidate{border-width:3px;padding:6px}
+.candidate img{height:235px}
+.name{font-size:14px}
+.panel img{height:300px}
+.actions button{font-size:16px}
 }
-
-.pickbar:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
-
-.candidate.selected {
-  background: #dce8ff;
-  border-color: #ed1010;
-  box-shadow: 0 0 0 3px #ed101055;
-}
-
 </style>
 </head>
+
 <body>
 <main class="wrap">
+
 <header>
 <h1>PILKADES DESA KARANGSARI</h1>
 <p>Kecamatan Binong, Kabupaten Subang — Tahun 2026</p>
@@ -72,168 +65,281 @@ button.action{border:0;border-radius:14px;padding:16px 10px;font-size:18px;font-
 <section id="votePage">
 <h2>Silakan Pilih Calon Kepala Desa</h2>
 <p class="sub">Tekan foto kandidat yang Anda pilih</p>
+
 <div class="candidates">
-<button class="candidate" type="button" data-id="1">
+
+<button class="candidate" type="button" data-id="1" aria-pressed="false">
 <span class="num">1</span>
 <img src="calon-1.jpeg" alt="Foto Calon Nomor 1">
 <span class="name">CALON 01</span>
 </button>
-<button class="candidate" type="button" data-id="2">
+
+<button class="candidate" type="button" data-id="2" aria-pressed="false">
 <span class="num">2</span>
 <img src="calon-2.jpeg" alt="Foto Dasim Sumantri">
 <span class="name">DASIM SUMANTRI, S.E</span>
 </button>
+
 </div>
+
 <button class="pickbar" id="chooseBtn" type="button" disabled>
-  PILIH KANDIDAT
+PILIH KANDIDAT
 </button>
+
 <p class="small">HALAMAN SIMULASI — bukan sistem pemungutan suara resmi.</p>
 </section>
 
 <section id="confirmPage" class="hidden">
+
 <h2>Konfirmasi Pilihan Anda</h2>
 <p class="sub">Pastikan calon yang dipilih sudah benar.</p>
+
 <div class="panel">
 <img id="chosenPhoto" src="calon-1.jpeg" alt="Foto calon terpilih">
 <h2 id="chosenName"></h2>
 <p id="chosenNumber"></p>
 </div>
+
 <div class="actions">
 <button class="action danger" id="againBtn" type="button">ULANGI</button>
 <button class="action primary" id="submitBtn" type="button">PILIH</button>
 </div>
+
 </section>
 
 <section id="donePage" class="hidden">
+
 <div class="thanks">
 <div class="thanks-card">
+
 <div class="check">✅</div>
 <h2>Terima Kasih</h2>
 <p>Hasil pilihan simulasi Anda:</p>
+
 <h3 id="resultName"></h3>
 <p id="resultNumber"></p>
+
 <h3>QR CODE HASIL PILIHAN</h3>
 <div id="resultQR" aria-label="QR Code hasil simulasi"></div>
+
 <p id="qrDetails" style="font-size:13px;overflow-wrap:anywhere"></p>
-<button class="action primary" id="downloadQR" type="button">SIMPAN QR CODE</button>
+
+<button class="action primary" id="downloadQR" type="button">
+SIMPAN QR CODE
+</button>
+
 </div>
 </div>
-<p class="small">QR ini hanya berisi bukti pilihan simulasi pada perangkat ini. Bukan bukti suara resmi dan tidak dikirim ke server.</p>
-<button class="action primary" id="restartBtn" type="button" style="display:block;margin:18px auto">KEMBALI KE AWAL</button>
+
+<p class="small">
+QR ini hanya berisi bukti pilihan simulasi pada perangkat ini.
+Bukan bukti suara resmi dan tidak dikirim ke server.
+</p>
+
+<button class="action primary" id="restartBtn" type="button"
+style="display:block;margin:18px auto">
+KEMBALI KE AWAL
+</button>
+
 </section>
 </main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
 <script>
 "use strict";
+
 const candidates = {
-  "1": {name:"CALON 01", number:"1", photo:"calon-1.jpeg"},
-  "2": {name:"DASIM SUMANTRI, S.E", number:"2", photo:"calon-2.jpeg"}
+  "1": {
+    name:"CALON 01",
+    number:"1",
+    photo:"calon-1.jpeg"
+  },
+  "2": {
+    name:"DASIM SUMANTRI, S.E",
+    number:"2",
+    photo:"calon-2.jpeg"
+  }
 };
+
 let selected = null;
 
 const votePage = document.getElementById("votePage");
 const confirmPage = document.getElementById("confirmPage");
 const donePage = document.getElementById("donePage");
+const chooseBtn = document.getElementById("chooseBtn");
 
 function showPage(page) {
   [votePage, confirmPage, donePage].forEach(function(section) {
     section.classList.add("hidden");
   });
+
   page.classList.remove("hidden");
   window.scrollTo({top:0, behavior:"smooth"});
 }
 
+function clearCandidateSelection() {
+  selected = null;
+
+  document.querySelectorAll(".candidate").forEach(function(button) {
+    button.classList.remove("selected");
+    button.setAttribute("aria-pressed", "false");
+  });
+
+  chooseBtn.disabled = true;
+}
+
+// KLIK FOTO UNTUK MEMILIH KANDIDAT
 document.querySelectorAll(".candidate").forEach(function(button) {
+
   button.addEventListener("click", function() {
+
     selected = candidates[button.dataset.id];
 
+    if (!selected) return;
+
     document.querySelectorAll(".candidate").forEach(function(item) {
-      item.classList.remove("selected");
+
+      const isSelected = item === button;
+
+      item.classList.toggle("selected", isSelected);
+
+      item.setAttribute("aria-pressed", String(isSelected));
+
     });
 
-    button.classList.add("selected");
+    chooseBtn.disabled = false;
 
-    document.getElementById("chooseBtn").disabled = false;
   });
+
 });
 
-document.getElementById("chooseBtn").addEventListener("click", function() {
+// TOMBOL PILIH KANDIDAT
+chooseBtn.addEventListener("click", function() {
+
   if (!selected) {
-    alert("Silakan pilih kandidat terlebih dahulu!");
+    alert("Silakan pilih kandidat terlebih dahulu.");
     return;
   }
 
   document.getElementById("chosenPhoto").src = selected.photo;
+
   document.getElementById("chosenName").textContent = selected.name;
+
   document.getElementById("chosenNumber").textContent =
     "Calon Nomor Urut " + selected.number;
 
   showPage(confirmPage);
-});
+
 });
 
+// TOMBOL ULANGI
 document.getElementById("againBtn").addEventListener("click", function() {
-  selected = null;
+
+  clearCandidateSelection();
+
   showPage(votePage);
+
 });
 
+// TOMBOL KONFIRMASI PILIH
 document.getElementById("submitBtn").addEventListener("click", function() {
+
   if (!selected) {
     alert("Silakan pilih calon terlebih dahulu.");
+    showPage(votePage);
     return;
   }
+
   showPage(donePage);
+
   document.getElementById("resultName").textContent = selected.name;
-  document.getElementById("resultNumber").textContent = "Nomor urut " + selected.number;
+
+  document.getElementById("resultNumber").textContent =
+    "Nomor urut " + selected.number;
 
   const qrBox = document.getElementById("resultQR");
+
   qrBox.innerHTML = "";
+
+  const now = new Date();
+
   const payload = {
     jenis: "SIMULASI PILKADES DESA KARANGSARI 2026",
     nomor_calon: selected.number,
     nama_calon: selected.name,
-    waktu: new Date().toLocaleString("id-ID"),
+    waktu: now.toLocaleString("id-ID"),
     status: "BUKTI SIMULASI - BUKAN SUARA RESMI"
   };
 
   if (typeof QRCode === "undefined") {
-    qrBox.textContent = "QR belum dapat dibuat. Periksa koneksi internet lalu muat ulang halaman.";
+
+    qrBox.textContent =
+      "QR belum dapat dibuat. Periksa koneksi internet lalu muat ulang halaman.";
+
     return;
   }
+
   new QRCode(qrBox, {
     text: JSON.stringify(payload),
     width: 220,
     height: 220,
     correctLevel: QRCode.CorrectLevel.M
   });
+
   document.getElementById("qrDetails").textContent =
-    "Pilihan: " + selected.name + " | " + new Date().toLocaleString("id-ID");
+    "Pilihan: " + selected.name + " | " + now.toLocaleString("id-ID");
+
 });
 
+// SIMPAN QR CODE
 document.getElementById("downloadQR").addEventListener("click", function() {
+
   const canvas = document.querySelector("#resultQR canvas");
+
   const image = document.querySelector("#resultQR img");
+
   let url = "";
+
   if (canvas) url = canvas.toDataURL("image/png");
   else if (image) url = image.src;
+
   if (!url) {
     alert("QR belum tersedia. Pastikan internet aktif.");
     return;
   }
+
   const link = document.createElement("a");
+
   link.href = url;
+
   link.download = "QR-Hasil-Simulasi-Pilkades-Karangsari.png";
+
   document.body.appendChild(link);
+
   link.click();
+
   link.remove();
+
 });
 
+// KEMBALI KE AWAL
 document.getElementById("restartBtn").addEventListener("click", function() {
-  selected = null;
+
+  clearCandidateSelection();
+
   document.getElementById("resultQR").innerHTML = "";
+
+  document.getElementById("resultName").textContent = "";
+
+  document.getElementById("resultNumber").textContent = "";
+
+  document.getElementById("qrDetails").textContent = "";
+
   showPage(votePage);
+
 });
+
 </script>
 </body>
 </html>
