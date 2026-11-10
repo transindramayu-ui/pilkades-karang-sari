@@ -39,6 +39,27 @@ button.action{border:0;border-radius:14px;padding:16px 10px;font-size:18px;font-
 #resultQR img,#resultQR canvas{display:block;margin:auto;max-width:100%;height:auto}
 .small{font-size:12px;color:#667085;text-align:center;margin:16px 0 5px;line-height:1.5}
 @media(max-width:430px){.wrap{padding:10px}.candidates{gap:8px}.candidate{border-width:3px;padding:6px}.candidate img{height:235px}.name{font-size:14px}.panel img{height:300px}.actions button{font-size:16px}}
+.small{font-size:12px;color:#667085;text-align:center;margin:16px 0 5px;line-height:1.5}
+
+/* CSS TAMBAHAN TOMBOL PILIH KANDIDAT */
+.pickbar {
+  width: 100%;
+  border: none;
+  cursor: pointer;
+  font-family: Arial, sans-serif;
+}
+
+.pickbar:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.candidate.selected {
+  background: #dce8ff;
+  border-color: #ed1010;
+  box-shadow: 0 0 0 3px #ed101055;
+}
+
 </style>
 </head>
 <body>
@@ -63,7 +84,9 @@ button.action{border:0;border-radius:14px;padding:16px 10px;font-size:18px;font-
 <span class="name">DASIM SUMANTRI, S.E</span>
 </button>
 </div>
-<div class="pickbar">PILIH KANDIDAT</div>
+<button class="pickbar" id="chooseBtn" type="button" disabled>
+  PILIH KANDIDAT
+</button>
 <p class="small">HALAMAN SIMULASI — bukan sistem pemungutan suara resmi.</p>
 </section>
 
@@ -124,12 +147,30 @@ function showPage(page) {
 document.querySelectorAll(".candidate").forEach(function(button) {
   button.addEventListener("click", function() {
     selected = candidates[button.dataset.id];
-    if (!selected) return;
-    document.getElementById("chosenPhoto").src = selected.photo;
-    document.getElementById("chosenName").textContent = selected.name;
-    document.getElementById("chosenNumber").textContent = "Calon Nomor Urut " + selected.number;
-    showPage(confirmPage);
+
+    document.querySelectorAll(".candidate").forEach(function(item) {
+      item.classList.remove("selected");
+    });
+
+    button.classList.add("selected");
+
+    document.getElementById("chooseBtn").disabled = false;
   });
+});
+
+document.getElementById("chooseBtn").addEventListener("click", function() {
+  if (!selected) {
+    alert("Silakan pilih kandidat terlebih dahulu!");
+    return;
+  }
+
+  document.getElementById("chosenPhoto").src = selected.photo;
+  document.getElementById("chosenName").textContent = selected.name;
+  document.getElementById("chosenNumber").textContent =
+    "Calon Nomor Urut " + selected.number;
+
+  showPage(confirmPage);
+});
 });
 
 document.getElementById("againBtn").addEventListener("click", function() {
